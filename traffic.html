@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script>
+            $(document).ready(function (){
+                $.getJSON("data.json", function(data) { //grab the data file
+                    s = 0; r = 0; l = 0; u = 0; //each direction
+                    vehicles = new Array(); //array to keep track of vehicles by vehicleID
+                    
+                    for(var i = 0; i<Object.keys(data).length; i++){
+                        if(!(data[i]["vehicle"] in vehicles)){
+                            vehicles[data[i]["vehicle"]] = [];
+                        }
+                        var vehicle_obj = {region:data[i]["region"], time:data[i]["time"]};
+                        vehicles[data[i]["vehicle"]].push(vehicle_obj);
+                    }
+
+                    for(var vehicle in vehicles) {
+                        vehicles[vehicle].sort(function(a, b){return a.time-b.time});
+                    } //sort vehicle points in time order
+
+                    for(var vehicle in vehicles) {
+                        for(var i = 0; i<vehicles[vehicle].length-1; i++){
+                            var orig = vehicles[vehicle][i].region;
+                            var dest = vehicles[vehicle][++i].region;
+                            var diff = dest - orig;
+                            if((diff == 2)||(diff == 6)){s++;}
+                            else if (diff == 4){u++;}
+                            else if ((diff == 7)||(diff == 3)) {l++;}
+                            else if ((diff == 1)||(diff == 5)) {r++;}
+                        }
+                    } //calculate each direction given regions
+                    
+                    alert("Right: " + r + "; Straight: " + s + "; Left: " + l + "; U: " + u);
+                    window.location.replace("http://coding-challenge.miovision.com/" + r + "" + s + "" + l + "" + u);
+                });
+            });
+        </script>
+    </head>
+    <body></body>
+</html>
